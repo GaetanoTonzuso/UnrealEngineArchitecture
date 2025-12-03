@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Ship.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class UNREALENGINEARCH_API AShip : public APawn
@@ -31,8 +36,20 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Ship | Movement")
 	float TorqueStrenght = 5.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ship | Graphics")
+	UStaticMeshComponent* ShipMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ship | Input")
+	UInputMappingContext* ShipMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ship | Input")
+	UInputAction* PropelInput;
+
 private:	
 
-	
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* CameraBoom;
 
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* Camera;
 };
