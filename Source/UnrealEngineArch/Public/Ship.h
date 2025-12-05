@@ -1,11 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "InputActionValue.h"
 #include "Ship.generated.h"
 
 class UInputMappingContext;
@@ -44,6 +43,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ship | Input")
 	UInputAction* PropelInput;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Ship | Input")
+	UInputAction* RotateInput;
+
+	void PropelUp(const FInputActionValue& Value);
+	void RotateShip(const FInputActionValue& Value);
 
 private:	
 

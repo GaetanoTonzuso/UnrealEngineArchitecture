@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Ship.h"
+#include "EnhancedInputComponent.h"
+#include <EnhancedInputSubsystems.h>
 
-// Sets default values
 AShip::AShip()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -19,18 +19,26 @@ AShip::AShip()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
 
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 }
 
-// Called when the game starts or when spawned
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Impulse Strenght: %f"), ImpulseStrenght);
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			SubSystem->ClearAllMappings();
+			SubSystem->AddMappingContext(ShipMappingContext,0);
+		}
+	}
 	
 }
 
-// Called every frame
+
 void AShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -41,6 +49,31 @@ void AShip::Tick(float DeltaTime)
 void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(PropelInput, ETriggerEvent::Triggered, this, &AShip::PropelUp);
+		EnhancedInputComponent->BindAction(RotateInput, ETriggerEvent::Triggered, this, &AShip::RotateShip);
+	}
+
+}
+
+void AShip::PropelUp(const FInputActionValue& Value)
+{
+	bool CurrentValue = Value.Get<bool>();
+	if (CurrentValue)
+	{
+		const FVector Impulse = ShipMesh->GetUpVector() * ImpulseStrenght;
+		ShipMesh->AddImpulse(Impulse, NAME_None, true);
+	}
+}
+
+void AShip::RotateShip(const FInputActionValue& Value)
+{
+	float CurrentValue = Value.Get<float>();
+	const FVector TorqueVector = FVector(1.f, 0 , 0) * CurrentValue * TorqueStrenght;
+
+	ShipMesh->AddTorqueInRadians(TorqueVector, NAME_None, true);
 
 }
 
