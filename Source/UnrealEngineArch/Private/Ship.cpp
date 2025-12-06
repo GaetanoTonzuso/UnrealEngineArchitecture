@@ -63,8 +63,9 @@ void AShip::PropelUp(const FInputActionValue& Value)
 	bool CurrentValue = Value.Get<bool>();
 	if (CurrentValue)
 	{
-		const FVector Impulse = ShipMesh->GetUpVector() * ImpulseStrenght;
-		ShipMesh->AddImpulse(Impulse, NAME_None, true);
+		const FVector WorldImpulseVector = FVector(0.f,0.f,1.f) * ImpulseStrenght;
+		const FVector LocalImpulseVector = GetActorRotation().RotateVector(WorldImpulseVector);
+		ShipMesh->AddImpulse(LocalImpulseVector, NAME_None, true);
 	}
 }
 
