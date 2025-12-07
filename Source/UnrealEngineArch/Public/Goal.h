@@ -38,5 +38,5 @@ protected:
 
 private:	
 	
-
+	bool bHasReachedGoal;
 };

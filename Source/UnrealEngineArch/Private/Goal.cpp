@@ -37,9 +37,21 @@ void AGoal::NotifyHit(class UPrimitiveComponent* MyComp,
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
+	FVector UpVector = Other->GetActorUpVector();
+	FVector WorldVectorUp = FVector::UpVector;
+
+	float DotDistance = FVector::DotProduct(UpVector,WorldVectorUp);
+
 	if (Other && Other != this && Other->IsA(AShip::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
+		if (!bHasReachedGoal)
+		{
+			if (DotDistance > 0.99f)
+			{
+				bHasReachedGoal = true;
+				UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
+			}
+		}
 	}
 
 }
