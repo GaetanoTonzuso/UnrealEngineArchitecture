@@ -39,19 +39,18 @@ void AGoal::NotifyHit(class UPrimitiveComponent* MyComp,
 
 	if (Other && Other != this && Other->IsA(AShip::StaticClass()))
 	{
-		AShip* Ship = Cast<AShip>(Other);
-
-		if (Ship != nullptr)
-		{
-			if (!bHasReachedGoal)
-			{
-				bHasReachedGoal = true;
-				UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
-				FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(this);
-				UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName);
-			}
-		}
+		CheckLandPlayer();
 	}
+}
 
+void AGoal::CheckLandPlayer()
+{
+	if (!bHasReachedGoal)
+	{
+		bHasReachedGoal = true;
+		UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
+		FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(this);
+		UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName);
+	}
 }
 

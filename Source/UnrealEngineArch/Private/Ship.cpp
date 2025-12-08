@@ -43,7 +43,11 @@ void AShip::BeginPlay()
 void AShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (GEngine)
+	{
+		CurrentVelocity = GetVelocity().Length();
+		GEngine->AddOnScreenDebugMessage(1, INDEFINITELY_LOOPING_DURATION, FColor::Green, FString::Printf(TEXT("Current Velocity: %f"), CurrentVelocity));
+	}
 }
 
 // Called to bind functionality to input
@@ -89,14 +93,19 @@ void AShip::RotateShip(const FInputActionValue& Value)
 bool AShip::IsLandedSafely()
 {
 	FRotator CurrentRotation = GetActorRotation();
-	float AccettableRollTollerance = 40.f;
-	
+	float AccettableRollTollerance = 40.f;		
 	return FMath::Abs(CurrentRotation.Roll) <= AccettableRollTollerance;
+}
+
+bool AShip::HandleVelocitySafe()
+{
+	return CurrentVelocity < MaxVelocity;
 }
 
 void AShip::HandleShipLand()
 {
-	if (!IsLandedSafely())
+	
+	if (!IsLandedSafely() || !HandleVelocitySafe())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Crashed!"));
 		FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
@@ -106,7 +115,7 @@ void AShip::HandleShipLand()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Safety Land!"));
-
 	}
 }
+
 

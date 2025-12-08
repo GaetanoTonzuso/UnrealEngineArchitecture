@@ -48,6 +48,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Ship | Movement")
 	float TorqueStrenght = 5.f;
 
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Ship | Movement")
+	float MaxVelocity = 1000.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ship | Graphics")
 	UStaticMeshComponent* ShipMesh;
 
@@ -62,6 +65,7 @@ protected:
 
 	void PropelUp(const FInputActionValue& Value);
 	void RotateShip(const FInputActionValue& Value);
+	bool HandleVelocitySafe();
 
 private:	
 
@@ -70,4 +74,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+	float CurrentVelocity;
 };
