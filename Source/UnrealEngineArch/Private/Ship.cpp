@@ -37,9 +37,6 @@ void AShip::BeginPlay()
 			SubSystem->AddMappingContext(ShipMappingContext,0);
 		}
 	}
-
-	
-	
 }
 
 
@@ -59,24 +56,14 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(PropelInput, ETriggerEvent::Triggered, this, &AShip::PropelUp);
 		EnhancedInputComponent->BindAction(RotateInput, ETriggerEvent::Triggered, this, &AShip::RotateShip);
 	}
-
 }
 
 
 void AShip::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!IsLandedSafely())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Crashed!"));
-		FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
-		UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName, true);
-	}
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Safety Land!"));
-
-	}
+	HandleShipLand();
 }
 
 void AShip::PropelUp(const FInputActionValue& Value)
@@ -105,5 +92,21 @@ bool AShip::IsLandedSafely()
 	float AccettableRollTollerance = 40.f;
 	
 	return FMath::Abs(CurrentRotation.Roll) <= AccettableRollTollerance;
+}
+
+void AShip::HandleShipLand()
+{
+	if (!IsLandedSafely())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crashed!"));
+		FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+		UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName, true);
+	}
+
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Safety Land!"));
+
+	}
 }
 

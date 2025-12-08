@@ -36,6 +36,8 @@ public:
 
 	bool IsLandedSafely();
 
+	void HandleShipLand();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Goal.h"
-
 #include "Ship.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AGoal::AGoal()
@@ -39,10 +39,17 @@ void AGoal::NotifyHit(class UPrimitiveComponent* MyComp,
 
 	if (Other && Other != this && Other->IsA(AShip::StaticClass()))
 	{
-		if (!bHasReachedGoal)
+		AShip* Ship = Cast<AShip>(Other);
+
+		if (Ship != nullptr)
 		{
-			bHasReachedGoal = true;
-			UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
+			if (!bHasReachedGoal)
+			{
+				bHasReachedGoal = true;
+				UE_LOG(LogTemp, Warning, TEXT("Goaaaaal!"));
+				FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(this);
+				UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName);
+			}
 		}
 	}
 
