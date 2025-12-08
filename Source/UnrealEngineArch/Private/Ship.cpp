@@ -3,6 +3,8 @@
 #include "Ship.h"
 #include "EnhancedInputComponent.h"
 #include <EnhancedInputSubsystems.h>
+#include "Kismet/GameplayStatics.h"
+
 
 AShip::AShip()
 {
@@ -35,6 +37,8 @@ void AShip::BeginPlay()
 			SubSystem->AddMappingContext(ShipMappingContext,0);
 		}
 	}
+
+	
 	
 }
 
@@ -58,6 +62,23 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+
+void AShip::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (!IsLandedSafely())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crashed!"));
+		FName CurrentLevelName = *UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+		UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName, true);
+	}
+
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Safety Land!"));
+
+	}
+}
+
 void AShip::PropelUp(const FInputActionValue& Value)
 {
 	bool CurrentValue = Value.Get<bool>();
@@ -76,5 +97,13 @@ void AShip::RotateShip(const FInputActionValue& Value)
 
 	ShipMesh->AddTorqueInRadians(TorqueVector, NAME_None, true);
 
+}
+
+bool AShip::IsLandedSafely()
+{
+	FRotator CurrentRotation = GetActorRotation();
+	float AccettableRollTollerance = 40.f;
+	
+	return FMath::Abs(CurrentRotation.Roll) <= AccettableRollTollerance;
 }
 

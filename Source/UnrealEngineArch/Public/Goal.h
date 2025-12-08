@@ -14,7 +14,7 @@
 UCLASS()
 class UNREALENGINEARCH_API AGoal : public AActor
 {
-	GENERATED_BODY()
+	GENERATED_BODY() 
 	
 public:	
 	// Sets default values for this actor's properties
