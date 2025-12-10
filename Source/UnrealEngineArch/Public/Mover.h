@@ -37,5 +37,9 @@ private:
 	bool bIsMovingToEnd;
 	FVector WorldStartPosition;
 	FVector WorldEndPosition;
+	AActor* Owner;
+
+	void MoveObstacle(float DeltaTime);
+
 	
 };

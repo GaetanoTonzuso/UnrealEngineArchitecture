@@ -19,8 +19,16 @@ void UMover::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	Owner = GetOwner();
+	if (Owner)
+	{
+		USceneComponent* ActorRoot = Owner->GetRootComponent();
+		ActorRoot->SetMobility(EComponentMobility::Movable);
+		WorldStartPosition = Owner->GetTransform().TransformPosition(LocalStartPosition);
+		WorldEndPosition = Owner->GetTransform().TransformPosition(LocalEndPosition);
+
+	}
+
 }
 
 
@@ -30,5 +38,28 @@ void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	if (!GetOwner()) return;
+
+	MoveObstacle(DeltaTime);
+	
+}
+
+void UMover::MoveObstacle(float DeltaTime)
+{
+	FVector CurrentPosition = Owner->GetActorLocation();
+	FVector TargetPosition = bIsMovingToEnd ? WorldStartPosition : WorldEndPosition;
+	FVector Direction = (TargetPosition - CurrentPosition).GetSafeNormal();
+	FVector NewPosition = CurrentPosition + MoveSpeed * DeltaTime * Direction;
+
+	if (FVector::Dist(NewPosition, TargetPosition) < FVector::Dist(CurrentPosition, TargetPosition))
+	{
+		GetOwner()->SetActorLocation(NewPosition);
+	}
+	else
+	{
+		GetOwner()->SetActorLocation(TargetPosition);
+		bIsMovingToEnd = !bIsMovingToEnd;
+	}
 }
 
